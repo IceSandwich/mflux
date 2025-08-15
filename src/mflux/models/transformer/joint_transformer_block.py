@@ -21,8 +21,8 @@ class JointTransformerBlock(nn.Module):
     def __call__(
         self,
         hidden_states: mx.array,
-        encoder_hidden_states: mx.array,
-        text_embeddings: mx.array,
+        encoder_hidden_states: mx.array, # t5
+        text_embeddings: mx.array, # clip
         rotary_embeddings: mx.array,
     ) -> tuple[mx.array, mx.array]:
         # 1a. Compute norm for hidden_states

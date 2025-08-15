@@ -40,16 +40,16 @@ class Transformer(nn.Module):
         t: int,
         config: RuntimeConfig,
         hidden_states: mx.array,
-        prompt_embeds: mx.array,
-        pooled_prompt_embeds: mx.array,
+        prompt_embeds: mx.array, # t5的结果
+        pooled_prompt_embeds: mx.array, # clip的结果
         controlnet_block_samples: list[mx.array] | None = None,
         controlnet_single_block_samples: list[mx.array] | None = None,
         kontext_image_ids: mx.array | None = None,
     ) -> mx.array:
         # 1. Create embeddings
         hidden_states = self.x_embedder(hidden_states)
-        encoder_hidden_states = self.context_embedder(prompt_embeds)
-        text_embeddings = Transformer.compute_text_embeddings(t, pooled_prompt_embeds, self.time_text_embed, config)
+        encoder_hidden_states = self.context_embedder(prompt_embeds) # t5
+        text_embeddings = Transformer.compute_text_embeddings(t, pooled_prompt_embeds, self.time_text_embed, config) # clip
         image_rotary_embeddings = Transformer.compute_rotary_embeddings(prompt_embeds, self.pos_embed, config, kontext_image_ids)  # fmt: off
 
         # 2. Run the joint transformer blocks
@@ -113,8 +113,8 @@ class Transformer(nn.Module):
         idx: int,
         block: JointTransformerBlock,
         hidden_states: mx.array,
-        encoder_hidden_states: mx.array,
-        text_embeddings: mx.array,
+        encoder_hidden_states: mx.array, # t5
+        text_embeddings: mx.array, # clip
         image_rotary_embeddings: mx.array,
         controlnet_block_samples: list[mx.array],
     ) -> mx.array:
